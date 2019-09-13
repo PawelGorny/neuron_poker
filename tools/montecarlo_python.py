@@ -11,9 +11,9 @@ __author__ = 'Nicolas Dickreuter'
 import logging
 import operator
 import time
-from collections import Counter
+from collections import Counter, deque
 from copy import copy
-
+import random
 import numpy as np
 
 log = logging.getLogger(__name__)
@@ -147,8 +147,6 @@ class MonteCarlo(object):
                 player_cards.extend((deck[random_card1], deck[random_card2]))
 
             known_player.extend(player_cards)
-            # known_player.append(player_cards[0])
-            # known_player.append(player_cards[1])
             all_players.append(known_player)
 
             try:
@@ -164,20 +162,21 @@ class MonteCarlo(object):
 
         for _ in range(player_amount - knownPlayers):
             random_player = []
+            dock_deq = deque(deck)
+            random.shuffle(deck)
             while True:
                 passes += 1
-                random_card1 = np.random.randint(0, len(deck))
-                random_card2 = np.random.randint(0, len(deck) - 1)
-
-                if not random_card1 == random_card2:
-                    crd1, crd2 = self.get_two_short_notation([deck[random_card1], deck[random_card2]],
-                                                             add_O_to_pairs=False)
-                    if crd1 in opponent_allowed_cards or crd2 in opponent_allowed_cards:
-                        break
-
+                card1 = dock_deq.pop()
+                card2 = dock_deq.pop()
+                crd1, crd2 = self.get_two_short_notation([card1, card2], add_O_to_pairs=False)
+                if crd1 in opponent_allowed_cards or crd2 in opponent_allowed_cards:
+                    break
+                if len(dock_deq) < 2:
+                    dock_deq = deque(deck)
+                    random.shuffle(dock_deq)
             # random_player.append(deck.pop(random_card1))
             # random_player.append(deck.pop(random_card2))
-            random_player.extend((deck.pop(random_card1), deck.pop(random_card2)))
+            random_player.extend((deck.pop(deck.index(card1)), deck.pop(deck.index(card2))))
 
             all_players.append(random_player)
 
@@ -186,7 +185,7 @@ class MonteCarlo(object):
     def distribute_cards_to_table(self, Deck, table_card_list):
         remaningRandoms = 5 - len(table_card_list)
         for n in range(0, remaningRandoms):
-            table_card_list.append(Deck.pop(np.random.randint(0, len(Deck))))
+            table_card_list.append(Deck.pop())
         return table_card_list
 
     def run_montecarlo(self, original_player_card_list, original_table_card_list, player_amount, ui, maxRuns,
