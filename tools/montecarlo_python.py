@@ -138,14 +138,13 @@ class MonteCarlo(object):
                     passes += 1
                     lan_deck = len(deck)
                     random_card1 = np.random.randint(0, lan_deck)
-                    random_card2 = np.random.randint(0, lan_deck-1)
+                    random_card2 = np.random.randint(0, lan_deck)
                     if not random_card1 == random_card2:
                         crd1, crd2 = self.get_two_short_notation([deck[random_card1], deck[random_card2]],
                                                                  add_O_to_pairs=False)
                         if crd1 in player_cards or crd2 in player_cards:
                             break
-                player_cards = []
-                player_cards.extend((deck[random_card1], deck[random_card2]))
+                player_cards = [deck[random_card1], deck[random_card2]]
 
             known_player.extend(player_cards)
             all_players.append(known_player)
@@ -185,8 +184,10 @@ class MonteCarlo(object):
 
     def distribute_cards_to_table(self, Deck, table_card_list):
         remaningRandoms = 5 - len(table_card_list)
-        for n in range(0, remaningRandoms):
-            table_card_list.append(Deck.pop())
+        if remaningRandoms > 0:
+            random.shuffle(Deck)
+            for n in range(0, remaningRandoms):
+                table_card_list.append(Deck.pop())
         return table_card_list
 
     def run_montecarlo(self, original_player_card_list, original_table_card_list, player_amount, ui, maxRuns,
