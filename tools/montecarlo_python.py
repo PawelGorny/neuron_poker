@@ -144,11 +144,11 @@ class MonteCarlo(object):
                         if crd1 in player_cards or crd2 in player_cards:
                             break
                 player_cards = []
-                player_cards.append(deck[random_card1])
-                player_cards.append(deck[random_card2])
+                player_cards.extend((deck[random_card1], deck[random_card2]))
 
-            known_player.append(player_cards[0])
-            known_player.append(player_cards[1])
+            known_player.extend(player_cards)
+            # known_player.append(player_cards[0])
+            # known_player.append(player_cards[1])
             all_players.append(known_player)
 
             try:
@@ -175,8 +175,9 @@ class MonteCarlo(object):
                     if crd1 in opponent_allowed_cards or crd2 in opponent_allowed_cards:
                         break
 
-            random_player.append(deck.pop(random_card1))
-            random_player.append(deck.pop(random_card2))
+            # random_player.append(deck.pop(random_card1))
+            # random_player.append(deck.pop(random_card2))
+            random_player.extend((deck.pop(random_card1), deck.pop(random_card2)))
 
             all_players.append(random_player)
 
@@ -209,9 +210,12 @@ class MonteCarlo(object):
 
         for m in range(maxRuns):
             runs += 1
-            Deck = copy(OriginalDeck)
-            PlayerCardList = copy(original_player_card_list)
-            TableCardsList = copy(original_table_card_list)
+            # Deck = copy(OriginalDeck)
+            # PlayerCardList = copy(original_player_card_list)
+            # TableCardsList = copy(original_table_card_list)
+            Deck = OriginalDeck[:]
+            PlayerCardList = original_player_card_list[:]
+            TableCardsList = original_table_card_list[:]
             Players, Deck, passes = self.distribute_cards_to_players(Deck, player_amount, PlayerCardList,
                                                                      TableCardsList, opponent_allowed_cards, passes)
             Deck5Cards = self.distribute_cards_to_table(Deck, TableCardsList)
