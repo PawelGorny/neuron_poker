@@ -136,8 +136,9 @@ class MonteCarlo(object):
             if type(player_cards) == set:
                 while True:
                     passes += 1
-                    random_card1 = np.random.randint(0, len(deck))
-                    random_card2 = np.random.randint(0, len(deck) - 1)
+                    lan_deck = len(deck)
+                    random_card1 = np.random.randint(0, lan_deck)
+                    random_card2 = np.random.randint(0, lan_deck-1)
                     if not random_card1 == random_card2:
                         crd1, crd2 = self.get_two_short_notation([deck[random_card1], deck[random_card2]],
                                                                  add_O_to_pairs=False)
@@ -163,7 +164,7 @@ class MonteCarlo(object):
         for _ in range(player_amount - knownPlayers):
             random_player = []
             dock_deq = deque(deck)
-            random.shuffle(deck)
+            random.shuffle(dock_deq)
             while True:
                 passes += 1
                 card1 = dock_deq.pop()
@@ -173,7 +174,7 @@ class MonteCarlo(object):
                     break
                 if len(dock_deq) < 2:
                     dock_deq = deque(deck)
-                    random.shuffle(dock_deq)
+                    np.random.shuffle(dock_deq)
             # random_player.append(deck.pop(random_card1))
             # random_player.append(deck.pop(random_card2))
             random_player.extend((deck.pop(deck.index(card1)), deck.pop(deck.index(card2))))
