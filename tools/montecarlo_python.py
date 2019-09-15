@@ -132,32 +132,23 @@ class MonteCarlo(object):
 
         for player_cards in player_card_list:
             known_player = []
-
+            dock_deq = deque(deck)
+            random.shuffle(dock_deq)
             if type(player_cards) == set:
                 while True:
                     passes += 1
-                    lan_deck = len(deck)
-                    random_card1 = np.random.randint(0, lan_deck)
-                    random_card2 = np.random.randint(0, lan_deck)
-                    if not random_card1 == random_card2:
-                        crd1, crd2 = self.get_two_short_notation([deck[random_card1], deck[random_card2]],
-                                                                 add_O_to_pairs=False)
-                        if crd1 in player_cards or crd2 in player_cards:
-                            break
-                player_cards = [deck[random_card1], deck[random_card2]]
+                    card1 = dock_deq.pop()
+                    card2 = dock_deq.pop()
+                    crd1, crd2 = self.get_two_short_notation([card1, card2], add_O_to_pairs=False)
+                    if crd1 in player_cards or crd2 in player_cards:
+                        break
+                    if len(dock_deq) < 2:
+                        dock_deq = deque(deck)
+                        np.random.shuffle(dock_deq)
+                player_cards = [deck.pop(deck.index(card1)), deck.pop(deck.index(card2))]
 
             known_player.extend(player_cards)
             all_players.append(known_player)
-
-            try:
-                deck.pop(deck.index(player_cards[0]))
-            except:
-                pass
-            try:
-                deck.pop(deck.index(player_cards[1]))
-            except:
-                pass
-
             knownPlayers += 1  # my own cards are known
 
         for _ in range(player_amount - knownPlayers):
@@ -174,8 +165,6 @@ class MonteCarlo(object):
                 if len(dock_deq) < 2:
                     dock_deq = deque(deck)
                     np.random.shuffle(dock_deq)
-            # random_player.append(deck.pop(random_card1))
-            # random_player.append(deck.pop(random_card2))
             random_player.extend((deck.pop(deck.index(card1)), deck.pop(deck.index(card2))))
 
             all_players.append(random_player)
