@@ -146,6 +146,9 @@ class MonteCarlo(object):
                         dock_deq = deque(deck)
                         np.random.shuffle(dock_deq)
                 player_cards = [deck.pop(deck.index(card1)), deck.pop(deck.index(card2))]
+            else:
+                deck.pop(deck.index(player_cards[0]))
+                deck.pop(deck.index(player_cards[1]))
 
             known_player.extend(player_cards)
             all_players.append(known_player)
